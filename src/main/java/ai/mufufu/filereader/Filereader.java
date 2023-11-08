@@ -36,7 +36,10 @@ public class Filereader {
         
         List<StockBar> bars = new ArrayList<>();
         
-        try (BufferedReader br = new BufferedReader(new FileReader("/home/mufufu/Downloads/data/1h/AAPL.csv"))) {
+        String path = "/home/mufufu/Downloads/data/1h/AAPL.csv";
+        //String path= "/Users/matiastames/Downloads/AAPL.csv";
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
             line = br.readLine();
             
