@@ -93,17 +93,39 @@ public class Filereader {
         
         
 
+        System.out.println("EMA results:");
         for (StockBar b : bars) {
             
             if (c > n) {
                 ema = ((b.getClose()- ema_prev)*wm)+ema_prev;
+                
+                float prev_close=0;
+                
+                
+                if (c>=1) {
+                    prev_close = bars.get(c-2).getClose();
+
+                }
                 
                 /*
                 System.out.println(String.format("Date: %s\tClose: %f\tn: %d\tEMA_PREV: %f\tEMA: %f", 
                     b.getDate(), b.getClose(),c, ema_prev, ema));
                 */
                 
+
+                
                 System.out.println(String.format("%d,%f,%f", c,b.getClose(),ema));
+                if (ema > b.getClose() && ema < prev_close) {
+                    System.out.println(String.format("Crossover SELL!!!: ema: %f, "
+                            + "close: %f, ema_prev: %f, prev_close: %f", 
+                            ema, b.getClose(), ema_prev, prev_close));                    
+                }               
+                if (ema < b.getClose() && ema > prev_close) {
+                    System.out.println(String.format("Crossover BUY!!!: ema: %f, "
+                            + "close: %f, ema_prev: %f, prev_close: %f", 
+                            ema, b.getClose(), ema_prev, prev_close));                    
+                }                   
+                
                 ema_prev=ema;
             }
             c++;
