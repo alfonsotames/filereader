@@ -36,7 +36,7 @@ public class Filereader {
         
         List<StockBar> bars = new ArrayList<>();
         
-        String path = "/home/mufufu/Downloads/data/1h/AAPL.csv";
+        String path = "/home/mufufu/Downloads/data/1h/VZ.csv";
         //String path= "/Users/matiastames/Downloads/AAPL.csv";
         
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -69,7 +69,13 @@ public class Filereader {
         }
         
         
-        int n=50;
+
+        //System.out.println(String.format("Starting with Funds: $ %f", funds));
+        
+        for (int n=50; n<=2000; n=n+10) {
+
+        
+        // intenta 70!!!!
         int c=1;
         float sum=0;
 
@@ -93,86 +99,94 @@ public class Filereader {
         
         
 
+        int crossovers=0;
         float funds=100000;
         float position=0;
         float pvalue=funds;
         int long_pos=0;
-        
-        System.out.println(String.format("Starting with Funds: $ %f", funds));
-        for (StockBar b : bars) {
-            
-            if (c > n) {
-                ema = ((b.getClose()- ema_prev)*wm)+ema_prev;
-                
-                float prev_close=0;
-                
-                
-                if (c>=1) {
-                    prev_close = bars.get(c-2).getClose();
+        float prev_close=0;            
 
-                }
-                
-                /*
-                System.out.println(String.format("Date: %s\tClose: %f\tn: %d\tEMA_PREV: %f\tEMA: %f", 
-                    b.getDate(), b.getClose(),c, ema_prev, ema));
-                */
-                
-                pvalue = funds + (position*b.getClose());
-                
-                System.out.println(String.format("Preiod: %d, Close: %.2f, EMA: %.2f, funds: $ %,.2f, "
-                        + "Position: %2f, Portfolio Value: %,.2f", 
-                        c,b.getClose(),ema,funds, position, pvalue));
-                
-                if (ema > b.getClose() && ema < prev_close) {
-                    if (long_pos !=0 ) {
-                    System.out.println(String.format("Crossover SELL!!!: ema: %.2f, "
-                            + "close: %.2f, ema_prev: %.2f, prev_close: %.2f", 
-                            ema, b.getClose(), ema_prev, prev_close));
-                    
-                    if (position > 0.0) {
-                        funds = funds + (position*b.getClose());
-                        position = 0;
-                        System.out.println(String.format("Funds: %,.2f, Position: %,.2f", funds, position));
-                    }                    
+            for (StockBar b : bars) {
 
-                    position = position + (funds/b.getClose())*-1;
-                    funds = funds + (position*b.getClose())*-1;
+                if (c > n) {
+                    ema = ((b.getClose()- ema_prev)*wm)+ema_prev;
                     
-                    System.out.println(String.format("Position %f stocks at %f, funds: %,.2f", 
-                            position, prev_close, funds));
-                    long_pos=0;
+                    prev_close=0;
+
+
+                    if (c>=1) {
+                        prev_close = bars.get(c-2).getClose();
+
                     }
-                    
-                }               
-                if (ema < b.getClose() && ema > prev_close) {
-                    System.out.println(String.format("Crossover BUY!!!: ema: %f, "
-                            + "close: %.2f, ema_prev: %.2f, prev_close: %.2f", 
-                            ema, b.getClose(), ema_prev, prev_close));
-                    
-                    if (long_pos == 0) {
 
-                        if (position < 0.0) {
-                            float debe = position * b.getClose();
-                            System.out.println(String.format("Funds: %,.2f", funds));
-                            funds = funds + debe;
-                            System.out.println(String.format("Debe: %,.2f, Quedan en funds: %,.2f", debe, funds));
+                    /*
+                    System.out.println(String.format("Date: %s\tClose: %f\tn: %d\tEMA_PREV: %f\tEMA: %f", 
+                        b.getDate(), b.getClose(),c, ema_prev, ema));
+                    */
+
+                    pvalue = funds + (position*b.getClose());
+                    
+                    //System.out.println(String.format("T: %d, Date: %s, Close: %.2f, EMA: %.2f, funds: $ %,.2f, Position: %2f, Portfolio Value: %,.2f", c,b.getDate(), b.getClose(),ema,funds, position, pvalue));
+                    
+                    if (ema > b.getClose() && ema < prev_close) {
+                        if (long_pos !=0 ) {
+                        
+                        //System.out.println(String.format("Crossover SELL!!!: ema: %.2f, close: %.2f, ema_prev: %.2f, prev_close: %.2f", ema, b.getClose(), ema_prev, prev_close));
+                        
+                        crossovers++;
+
+                        if (position > 0.0) {
+                            funds = funds + (position*b.getClose());
                             position = 0;
-                        }
-                        position = position + (funds/b.getClose());
+                            //System.out.println(String.format("Funds: %,.2f, Position: %,.2f", funds, position));
+                        }                    
+
+                        position = position + (funds/b.getClose())*-1;
                         funds = funds + (position*b.getClose())*-1;
 
+                        /*
                         System.out.println(String.format("Position %f stocks at %f, funds: %,.2f", 
                                 position, prev_close, funds));
-                        long_pos = 1;
+                        */
+                        long_pos=0;
+                        }
+
+                    }               
+                    if (ema < b.getClose() && ema > prev_close) {
                         
-                    }
-                    
-                }                   
-                
-                ema_prev=ema;
+                        //System.out.println(String.format("Crossover BUY!!!: ema: %f, close: %.2f, ema_prev: %.2f, prev_close: %.2f", ema, b.getClose(), ema_prev, prev_close));
+                        
+                        crossovers++;
+                        if (long_pos == 0) {
+
+                            if (position < 0.0) {
+                                float debe = position * b.getClose();
+                                
+                                //System.out.println(String.format("Funds: %,.2f", funds));
+                                funds = funds + debe;
+                                //System.out.println(String.format("Debe: %,.2f, Quedan en funds: %,.2f", debe, funds));
+                                position = 0;
+                            }
+                            position = position + (funds/b.getClose());
+                            funds = funds + (position*b.getClose())*-1;
+                            /*
+                            System.out.println(String.format("Position %f stocks at %f, funds: %,.2f", 
+                                    position, prev_close, funds));
+                            */
+                            long_pos = 1;
+
+                        }
+
+                    }                   
+
+                    ema_prev=ema;
+                }
+                c++;
             }
-            c++;
+             System.out.println(String.format("N: %d, Crossovers: %d, Portfolio Value: %,.2f", n,crossovers,pvalue));
+
         }
+
     }
     
     // Datetime,Open,High,Low,Close,Volume,Dividends,Stock Splits
